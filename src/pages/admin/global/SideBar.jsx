@@ -1,22 +1,24 @@
 import { useState } from "react";
 import { Box, IconButton, Typography } from "@mui/material";
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-import { Sidebar, Menu, MenuItem, SubMenu } from "react-pro-sidebar";
+import { Sidebar, Menu, MenuItem } from "react-pro-sidebar";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import ShoppingBasketIcon from "@mui/icons-material/ShoppingBasket";
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import HomeRepairServiceIcon from "@mui/icons-material/HomeRepairService";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 const Item = ({ title, to, icon, selected, setSelected }) => {
   return (
     <MenuItem
-      active={selected == title}
+      active={selected === title}
       onClick={() => setSelected(title)}
       icon={icon}
     >
-      <Typography>{title}</Typography>
-      <Link to={to} />
+      <Link to={to}>
+        <Typography style={{ textDecoration: "none", color: "black" }}>
+          {title}
+        </Typography>
+      </Link>
     </MenuItem>
   );
 };
@@ -25,8 +27,12 @@ const SideBar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [selected, setSelected] = useState("Dashboard");
 
+  // const location = useLocation();
+  // const userRole = location.state?.role;
+
   return (
     <Box>
+      {console.log(sessionStorage.getItem("token"))}
       <Sidebar collapsed={isCollapsed} style={{ height: "100%" }}>
         <Menu iconShape="square">
           <MenuItem

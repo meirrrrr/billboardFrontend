@@ -4,48 +4,54 @@ import Header from "../../../components/admin/Header";
 import { useState } from "react";
 import axios from "axios";
 
-const initialValues = {
-  firstName: "",
-  lastName: "",
-  email: "",
-  username: "",
-  passwd: "",
-};
+const baseUrl = "http://192.168.1.214:8080/admin/bill/";
 
-const base_url = "http://192.168.1.214:8080/admin/manager";
+const ProductForm = () => {
+  const [location, setLocation] = useState(null);
+  const [height, setHeight] = useState(null);
+  const [width, setWidth] = useState(null);
+  const [display_type, setDisplay_type] = useState(null);
+  const [price, setPrice] = useState(null);
 
-const Forms = () => {
-  const [name, setName] = useState(null);
-  const [surname, setSurname] = useState(null);
-  const [email, setEmail] = useState(null);
-  const [username, setUsername] = useState(null);
-  const [password, setPassword] = useState(null);
+  const apiClient = axios.create({
+    baseURL: baseUrl,
+  });
 
-  function createUser() {
-    console.log({
-      name: name,
-      surname: surname,
-      email: email,
-      username: username,
-      password: password,
-    });
-    axios
-      .post(base_url, {
-        name: name,
-        surname: surname,
-        email: email,
-        username: username,
-        password: password,
-      })
-      .then((response) => {
-        console.log(response);
+  const token = sessionStorage.getItem("token");
+
+  apiClient.interceptors.request.use(
+    (config) => {
+      if (token) {
+        config.headers["Authorization"] = `Bearer ${sessionStorage.getItem(
+          "token"
+        )}`;
+      }
+      return config;
+    },
+    (error) => {
+      return Promise.reject(error);
+    }
+  );
+
+  const createProduct = async () => {
+    try {
+      const response = await apiClient.post(`${baseUrl}`, {
+        locationId: location,
+        height: height,
+        width: width,
+        display_type: display_type,
+        price: price,
       });
-  }
+      console.log("Manager created:", response.data);
+    } catch (error) {
+      console.error("Error creating manager:", error);
+    }
+  };
 
   return (
     <Box m="20px">
-      <Header title="CREATE USER" subtitle="Create a new user Profile" />
-      <Formik initialValues={initialValues} onSubmit={createUser}>
+      <Header title="CREATE PRODUCT" subtitle="Create a new Product" />
+      <Formik onSubmit={createProduct}>
         {({
           values,
           errors,
@@ -63,12 +69,25 @@ const Forms = () => {
               <TextField
                 fullWidth
                 variant="filled"
-                type="text"
-                label="Name"
+                type="number"
+                label="Location"
                 onBlur={handleBlur}
-                onChange={(e) => setName(e.target.value)}
+                onChange={(e) => setLocation(e.target.value)}
+                value={values.location}
+                name="location"
+                error={!!touched.location && !!errors.location}
+                helperText={touched.address1 && errors.address1}
+                sx={{ gridColumn: "span 4" }}
+              />
+              <TextField
+                fullWidth
+                variant="filled"
+                type="number"
+                label="Height"
+                onBlur={handleBlur}
+                onChange={(e) => setHeight(e.target.value)}
                 value={values.address1}
-                name="username"
+                name="height"
                 error={!!touched.address1 && !!errors.address1}
                 helperText={touched.address1 && errors.address1}
                 sx={{ gridColumn: "span 4" }}
@@ -76,12 +95,12 @@ const Forms = () => {
               <TextField
                 fullWidth
                 variant="filled"
-                type="text"
-                label="Surname"
+                type="number"
+                label="Width"
                 onBlur={handleBlur}
-                onChange={(e) => setSurname(e.target.value)}
+                onChange={(e) => setWidth(e.target.value)}
                 value={values.address1}
-                name="name"
+                name="width"
                 error={!!touched.address1 && !!errors.address1}
                 helperText={touched.address1 && errors.address1}
                 sx={{ gridColumn: "span 4" }}
@@ -89,12 +108,12 @@ const Forms = () => {
               <TextField
                 fullWidth
                 variant="filled"
-                type="text"
-                label="Username"
+                type="number"
+                label="Display type"
                 onBlur={handleBlur}
-                onChange={(e) => setUsername(e.target.value)}
+                onChange={(e) => setDisplay_type(e.target.value)}
                 value={values.address1}
-                name="surname"
+                name="display_type"
                 error={!!touched.address1 && !!errors.address1}
                 helperText={touched.address1 && errors.address1}
                 sx={{ gridColumn: "span 4" }}
@@ -102,25 +121,12 @@ const Forms = () => {
               <TextField
                 fullWidth
                 variant="filled"
-                type="text"
-                label="Email"
+                type="number"
+                label="Price"
                 onBlur={handleBlur}
-                onChange={(e) => setEmail(e.target.value)}
-                value={values.address1}
-                name="email"
-                error={!!touched.address1 && !!errors.address1}
-                helperText={touched.address1 && errors.address1}
-                sx={{ gridColumn: "span 4" }}
-              />
-              <TextField
-                fullWidth
-                variant="filled"
-                type="password"
-                label="Password"
-                onBlur={handleBlur}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => setPrice(e.target.value)}
                 value={values.address2}
-                name="Password"
+                name="price"
                 error={!!touched.address2 && !!errors.address2}
                 helperText={touched.address2 && errors.address2}
                 sx={{ gridColumn: "span 4" }}
@@ -128,7 +134,7 @@ const Forms = () => {
             </Box>
             <Box display="flex" justifyContent="end" mt="20px">
               <Button type="submit" color="secondary" variant="contained">
-                Create New User
+                Create New Product
               </Button>
             </Box>
           </form>
@@ -138,4 +144,4 @@ const Forms = () => {
   );
 };
 
-export default Forms;
+export default ProductForm;

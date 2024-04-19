@@ -10,7 +10,7 @@ const Login = () => {
   const paperStyle = {
     padding: 20,
     height: "70vh",
-    width: 280,
+    width: 500,
     margin: "60px 550px",
   };
 
@@ -30,14 +30,16 @@ const Login = () => {
         "http://192.168.1.214:8080/auth/sign-in",
         userCredentials
       );
-      console.log(response);
       const token = response.data.token;
-      console.log(token);
-      localStorage.setItem("token", token);
+      sessionStorage.setItem("token", token);
       const decoded = jwtDecode(token);
 
-      if (decoded.Roles[0].Role == "ADMIN") {
+      if (decoded.Roles[0].Role === "ADMIN") {
+        sessionStorage.setItem("userRole", decoded.Roles[0].Role);
         navigate("/admin/managers");
+      } else if (decoded.Roles[0].Role === "MANAGER") {
+        sessionStorage.setItem("userRole", decoded.Roles[0].Role);
+        navigate("manager/orders");
       }
     } catch (error) {
       console.error("Login failed:", error);

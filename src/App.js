@@ -1,15 +1,17 @@
 import TopBar from "./pages/admin/global/TopBar";
-import { Route, Routes, useLocation } from "react-router-dom";
+import { Route, Routes, Navigate, useLocation } from "react-router-dom";
 import Forms from "./pages/admin/manager/Forms";
 import Managers from "./pages/admin/managers/Managers";
 import { SideBar } from "./pages/admin/global/SideBar";
 import Products from "./pages/admin/products/Products";
 import Login from "./pages/admin/auth/Login";
 import React from "react";
+import PrivateRoute from "./pages/admin/privateRoute/PrivateRoute";
+import ProductForm from "./pages/admin/product/ProductForm";
 
 function App() {
   const location = useLocation();
-  const noSideBarAndTopBarRoutes = ["/login"]; // Добавьте сюда любые другие маршруты, если они есть
+  const noSideBarAndTopBarRoutes = ["/login"];
   const showSideBarAndTopBar = !noSideBarAndTopBarRoutes.includes(
     location.pathname
   );
@@ -17,42 +19,34 @@ function App() {
   return (
     <div className="app">
       {showSideBarAndTopBar && <SideBar />}
-      <main className={showSideBarAndTopBar ? "content" : "full-page"}>
+      <main className="content">
         {showSideBarAndTopBar && <TopBar />}
         <Routes>
+          <Route path="/" element={<Navigate to="/login" replace />} />
+          <Route path="/admin" element={<Navigate to="/login" replace />} />
           <Route path="/login" element={<Login />} />
           <Route
             path="/admin/managers"
             element={
-              <ProtectedLayout>
+              <PrivateRoute>
                 <Managers />
-              </ProtectedLayout>
+              </PrivateRoute>
             }
           />
-          <Route
-            path="/admin/managers/create"
-            element={
-              <ProtectedLayout>
-                <Forms />
-              </ProtectedLayout>
-            }
-          />
+          <Route path="/admin/managers/create" element={<Forms />} />
+          <Route path="/admin/products/create" element={<ProductForm />} />
           <Route
             path="/admin/products"
             element={
-              <ProtectedLayout>
+              <PrivateRoute>
                 <Products />
-              </ProtectedLayout>
+              </PrivateRoute>
             }
           />
         </Routes>
       </main>
     </div>
   );
-}
-
-function ProtectedLayout({ children }) {
-  return <React.Fragment>{children}</React.Fragment>;
 }
 
 export default App;

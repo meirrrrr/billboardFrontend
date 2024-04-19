@@ -23,16 +23,16 @@ function Managers() {
   const [editData, setEditData] = useState({});
 
   const baseUrl = "http://192.168.1.214:8080/admin/manager/";
+  const token = sessionStorage.getItem("token");
 
   const apiClient = axios.create({
-    baseURL: "http://192.168.1.214:8080/admin/manager/",
+    baseURL: baseUrl,
   });
 
   apiClient.interceptors.request.use(
     (config) => {
-      const token = localStorage.getItem("token");
       if (token) {
-        config.headers["Authorization"] = `Bearer ${localStorage.getItem(
+        config.headers["Authorization"] = `Bearer ${sessionStorage.getItem(
           "token"
         )}`;
       }
@@ -99,14 +99,14 @@ function Managers() {
         <Typography variant="h6" gutterBottom component="div" sx={{ p: 2 }}>
           Manager List
         </Typography>
-        <Table sx={{ minWidth: 750 }} aria-label="simple table">
+        <Table sx={{ minWidth: 1170 }} aria-label="simple table">
           <TableHead>
             <TableRow>
               <TableCell>Name</TableCell>
               <TableCell>Surname</TableCell>
               <TableCell>Username</TableCell>
               <TableCell>Email</TableCell>
-              <TableCell>Role ID</TableCell>
+              <TableCell>Manager ID</TableCell>
               <TableCell align="right">Actions</TableCell>
             </TableRow>
           </TableHead>
